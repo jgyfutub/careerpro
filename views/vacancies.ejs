@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src=" https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <style>
+        body{
+          font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+     }
+    </style>
+    <div style="display:flex;flex-direction:row;border-radius: 2px;" id="id1">
+        <img src="https://wallpapercave.com/dwp1x/wp3616155.jpg" style="width:50%;display:block;height:750px" id="img"/>
+        <script>
+            img=document.getElementById('img')
+            img.style.height=window.innerHeight
+            if(window.innerWidth<900){
+               img.style.display='none'
+            }else{
+                img.style.display='block'
+            }
+        </script>
+        <div style="display:block;padding-top:80px;padding-left:calc(100%/8)">
+            <div  class="flex flex-col" style=" padding-bottom:30px">
+            <div style="display:flex;justify-content:start;margin-bottom: 10px;column-gap: 10px;" class="text-2xl ">
+                <p>Step</p>
+                <p style="color:blueviolet"><strong>2</strong></p>
+            </div>
+            <p class="">Enter your vacancies here:</p>
+            <form action="/vacancies/:id" method="post">
+            <input style="width:250px;margin-bottom:30px;height: 25px;" placeholder='add your skills here:' name="skill"  >
+            <button type="submit" name="skill" class="bg-red-300 hover:bg-red-600 rounded-lg "style="padding:10px;">Add more vacancies</button></form></div>
+            <p class="text-3xl text-black mb-2">Vacancies:</p>
+        <div style="display:block;">
+        <% skilllist.forEach(function(skill){ %>
+            <div style="display:flex;margin-block: 10px;">
+                <form action="/vacancies/:id/delete" method="post">
+        <input type="checkbox" name="checkbox" value="<%= skill %>" onChange="this.form.submit()"></form>
+        <p> <%= skill%></p> </div>
+        <% }) %></div>
+        <% if(error!=""){ %>
+            <li>
+              <p class="text-lg" style="color:red;margin-top: 20px;"> <%= error %></p>
+            </li>
+            <% } %>
+       <div style="display:flex;justify-content:start;column-gap:120px" >
+        <form action="/vacancies/:id/dashboardcompany" method="post">
+        <button  class="bg-cyan-300 hover:bg-cyan-600 rounded-lg" style="padding:10px;height:50px;">Submit</button></form></div>
+    </div>
+    </div>
+</body>
+</html>

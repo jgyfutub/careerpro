@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src=" https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <style>
+        body{
+          font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+     }
+    </style>
+    <div style="display:flex;flex-direction:row;" id="id1">
+    <img src="https://wallpaperaccess.com/full/121436.jpg" style="width:60%;display:block;height:auto" id="img"/>
+    <script>
+        img=document.getElementById('img')
+        img.style.height=window.innerHeight
+        if(window.innerWidth<900){
+           img.style.display='none'
+        }else{
+            img.style.display='block'
+        }</script>
+    <form action="/registercompany" method="post" class="flex flex-col" style=" height:100%;padding-top:80px;padding-left: 100px;padding-bottom: 200px;"><ul >
+        <li> <div style="display:flex;justify-content:start;column-gap:120px;margin-bottom: 20px;" ><a href="/">
+            <button  class="bg-cyan-300 hover:bg-cyan-600 rounded-lg "style="padding-inline:20px;padding-block:5px"> back to main page </button></a>
+        </li>
+        <p class="text-4xl text-black mb-2">Sign-Up</p>
+        <p class="text-lg text-black mb-2">email</p>
+    <li><input type="email" name="email" placeholder="email" class="border-slate=500  border-4 mb-3 rounded-lg" style="width:300px;padding-inline:10px ;padding-block: 5px;"></li>
+    <p class="text-lg text-black mb-2">password</p>
+    <li><input type="password" name="password" placeholder="password" class="border-slate=500  border-4 mb-3 rounded-lg" style="width:300px;padding-inline:10px ;padding-block: 5px;"></li>
+    <!-- <p class="text-lg text-black mb-2">Confirm password</p>
+    <li><input type="password" name="confirmpassword" placeholder="confirm password" class="border-slate=500  border-4 mb-3 rounded-lg" style="width:300px;padding-inline:10px ;padding-block: 5px;"></li> -->
+    <% if(error!=""){ %>
+        <li>
+          <p class="text-lg" style="color:red;margin-top: 20px;"> <%= error_register %></p>
+        </li>
+        <% } %>
+    <li> <div style="display:flex;justify-content:start;column-gap:120px" >
+        <a href="/details">
+        <button type="submit" name="details" class="bg-red-200 hover:bg-red-500 rounded-lg "style="padding:15px"> Submit </button></a>
+    </li>
+    </form></div>
+</body>
+</html>

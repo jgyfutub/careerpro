@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src=" https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <style>
+        body{
+          font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+     }
+    </style>
+    <div style="display:flex;flex-direction:row;border-radius: 2px;" id="id1">
+    <img src="https://www.easywallprints.com/upload/designs/career-success-word-cloud-small-3.jpg" style="width:50%;display:block;" id="img"/>
+    <script>
+        img=document.getElementById('img')
+        if(window.innerWidth<900){
+           img.style.display='none'
+        }else{
+            img.style.display='block'
+        }
+    </script>
+    <form action="/details/:id" method="post" class="flex flex-col" style=" height:100%;padding-top:80px;padding-left:calc(100%/10)"><ul >
+        <div style="display:flex;justify-content:start;margin-bottom: 10px;column-gap: 10px;" class="text-2xl ">
+            <p>Step</p>
+            <p style="color:blueviolet"><strong>1</strong></p>
+        </div>
+        <p class="text-3xl text-black mb-2">Tell us more about yourself:</p>
+        <p class="text-lg text-black mb-2">Name:</p>
+    <li><input type="text" name="name" placeholder="name" class="border-slate=500  border-4 mb-3 " style="width:250px"></li>
+    <div style="display:flex;justify-content:start;column-gap:140px" >
+    <p class="text-lg text-black mb-2">age:</p>
+    <p class="text-lg text-black mb-2">your Photo:</p></div>
+    <li><div style="display:flex;justify-content:start;column-gap:120px" >
+        <input type="number" name="age" min="0" max="100" class="border-slate=500  border-4 mb-6" style="width:50px" placeholder="age">
+        <input type="file" id="img" name="img" accept="image/x-png,image/gif,image/jpeg" > </div> </li>
+    <p class="text-lg text-black mb-2">Date of birth:</p>
+    <li><input type="date" name="date" placeholder="dd/mm/yyyy" class="border-slate=500  border-4 mb-6" style="width:150px"></li>
+    <p class="text-lg text-black mb-2">Describe yourself:</p>
+    <li><textarea type="text" name="aboutYou" placeholder="about you" class="border-slate=500  border-4 mb-6" style="width:250px;height: 130px;"></textarea></li>
+    <li> <div style="display:flex;justify-content:start;column-gap:120px" >
+        <button type="submit" name="details" class="bg-red-300 hover:bg-red-600 rounded-lg "style="padding:15px"> Submit </button>
+    </li>
+    </form></div>
+</body>
+</html>

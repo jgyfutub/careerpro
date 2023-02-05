@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+		</style>
+	</head>
+    <script src="three.js"></script>
+    <script src=" https://cdn.tailwindcss.com"></script>
+	<body>
+        <div id="bg" style="position:fixed;">
+            <div style="background-color:transparent;color:white;width:100%;position: fixed;top:20%">
+                <div style="display:flex;justify-content:center;flex-wrap: wrap;font-size:60px">
+                    <h1>Welcome to career pro</h1>
+                <!-- <img src="" style="height:400px;width:500px;margin-right: 10px;"/> -->
+                </div>
+                <p style="text-align:center;font-size:30px">Boost you career with career pro!</p>
+                <div style="display:flex;justify-content:center;column-gap: 100px;margin-top: 50px;">
+                    <a href="/login">
+                <button class="bg-neutral-800 hover:bg-neutral-500 active:bg-neutral-200" style="padding-inline:90px;padding-block:10px">Login as user</button></a>
+                <a href="/register">
+                <button class="bg-neutral-800 hover:bg-neutral-500 active:bg-neutral-200" style="padding-inline:90px;padding-block:10px">Sign-Up as user</button></a></div>
+                <div style="display:flex;justify-content:center;column-gap: 100px;margin-top: 50px;">
+                    <a href="/logincompany">
+                <button class="bg-neutral-800 hover:bg-neutral-500 active:bg-neutral-200" style="padding-inline:90px;padding-block:10px">Login as company</button></a>
+                <a href="/registercompany">
+                <button class="bg-neutral-800 hover:bg-neutral-500 active:bg-neutral-200" style="padding-inline:90px;padding-block:10px">Sign-Up as company</button></a></div>
+            </div>
+            </div>
+        </div>
+		<script>
+			const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+const renderer = new THREE.WebGLRenderer({
+    div:document.querySelector('#bg')
+});
+renderer.setPixelRatio(window.devicePixelRatio)
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
+camera.position.setZ(30);
+const geometry=new THREE.TorusKnotGeometry(12.711,1.4553,73,16,16,19)
+const material= new THREE.MeshStandardMaterial({color:0x808080,wireframe:true})
+const torus=new THREE.Mesh(geometry,material)
+scene.add(torus)
+const pointLight=new THREE.PointLight(0xffffff)
+pointLight.position.set(5,5,5)
+const ambientLight=new THREE.AmbientLight(0xffffff)
+scene.add(pointLight,ambientLight)
+function addStar(){
+    const geometry=new THREE.SphereGeometry(0.25,24,24)
+    const material=new THREE.MeshStandardMaterial({color:0xffffff})
+    const star=new THREE.Mesh(geometry,material)
+    const [x,y,z]=Array(3).fill().map(()=>THREE.MathUtils.randFloatSpread(100))
+    star.position.set(x,y,z)
+    scene.add(star)
+}
+Array(300).fill().forEach(addStar)
+function animate(){
+    requestAnimationFrame(animate)
+    torus.rotation.x+=0.01
+    torus.rotation.y+=0.005
+    torus.rotation.z+=0.01
+    renderer.render(scene,camera)
+}
+animate()
+		</script>
+	</body>
+</html>
