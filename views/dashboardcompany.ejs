@@ -263,21 +263,39 @@
     <div style="display:flex;flex-direction:row;">
      <button style="padding: 13px;font-size: medium;background-color: #f2f2f2;border-width: 0px;"id='rec'>Vacancies</button>
      </div>
-     <form action="/dashboardcompany/:id/vacancies" method="post">
+     <form action="/dashboardcompany/vacancies/:id" method="post">
      <button style="padding: 13px;font-size: medium;border-width: 0px;display: block;" class="bg-slate-200 text-black hover:text-white rounded-lg hover:bg-slate-600 active:bg-slate-900" id="hide">Update Vacancies</button></form>
      <button class="bg-red-500 hover:bg-red-900 mt-2 ml-2 px-1 " style="height:20px" id="cross3">X</button>
     </div>
  <div style="display:block;background-color: #f2f2f2;padding-inline: 20px;border-bottom-left-radius: 20px;border-bottom-right-radius: 20px;margin-right:15px;; padding-top:10px;max-width: 400px;">
     
     <% var i=0 %>
+    <% var j=0 %>
        <% for(i=0;i<UserDetails.requirements.length;i++){ %>
          <% if(i%2==1){ %>
-         <div style="display:flex;justify-content: space-between;padding-inline:20px;padding-block: 10px;">
-              <p style="font-weight:bold"><%= UserDetails.requirements[i] %></p> </div>
+         <div style="display:block;padding-inline:20px;padding-block: 10px;">
+              <p style="font-weight:bold"><%= UserDetails.requirements[i] %></p>
+              <% UserDetails.applications.forEach(function(application){ %>
+                <% if(application.job==UserDetails.requirements[i]){ %>
+                <%   for(j=0;j<application.applicants.length;j++){ %>
+                    <form action="/dashboardcompany/:id/userlink" method="post">
+                       <button name="userlink" value="<%= application.applicants[j].split('+')[1] %>" type="submit"><%=  application.applicants[j].split('+')[0]  %></button></form>
+                <%   } %>
+                <%   } %>             
+                <% })  %>
+             </div>
               <% } %>
           <% if(i%2==0){ %>
               <div style="display:flex;justify-content: space-between;padding-inline:20px;background-color: #eae6e9;padding-block: 10px;">
-                <p style="font-weight:bold"><%= UserDetails.requirements[i] %></p></div>
+                <p style="font-weight:bold"><%= UserDetails.requirements[i] %></p>
+                <% UserDetails.applications.forEach(function(application){ %>
+                    <% if(application.job==UserDetails.requirements[i]){ %>
+                    <%   for(j=0;j<application.applicants.length;j++){ %>
+                        <form action="/dashboardcompany/:id/userlink" method="post">
+                           <button name="userlink" value="<%= application.applicants[j].split('+')[1] %>" type="submit"><%= application.applicants[j].split('+')[0] %></button></form></div>
+                    <%   } %>
+                    <%   } %>             
+                    <% })  %>
                 <% } %>
               <% } %>
 </div>

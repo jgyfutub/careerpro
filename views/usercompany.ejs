@@ -252,16 +252,16 @@
     <% var i=0 %>
        <% for(i=0;i<worklist.requirements.length;i++){ %>
          <% if(i%2==1){ %>
-         <div style="display:flex;justify-content: space-between;padding-inline:20px;padding-block: 10px;">
+         <div style="display:flex;justify-content: space-around;padding-inline:20px;padding-block: 10px;">
               <p style="font-weight:bold"><%= worklist.requirements[i] %></p> 
-              <form action="/dashboard/:id/:companyId/apply" method="post">
-            <button type="submit" value="<%= worklist.requirements[i] %>" name="applybutton">Apply</button></form></div>
+              <form action="/dashboard/:id/:companyId/apply" style="margin-left: 20px;" method="post">
+            <button type="submit" value="<%= worklist.requirements[i] %>" style="padding-inline: 10px;padding-block: 5px;border-radius:5px;" class="bg-cyan-300 hover:bg-cyan-800" name="applybutton">Apply</button></form></div>
               <% } %>
           <% if(i%2==0){ %>
               <div style="display:flex;justify-content: space-between;padding-inline:20px;background-color: #eae6e9;padding-block: 10px;">
                 <p style="font-weight:bold"><%= worklist.requirements[i] %></p>
-                <form action="/dashboard/:id/:companyId/apply" method="post">
-                    <button type="submit" value="<%= worklist.requirements[i] %>"  name="applybutton">Apply</button></form></div>
+                <form action="/dashboard/:id/:companyId/apply" style="margin-left: 20px;" method="post">
+                    <button type="submit" value="<%= worklist.requirements[i] %>" style="padding-inline: 10px;padding-block: 5px;border-radius:5px;" class="bg-cyan-300 hover:bg-cyan-800" name="applybutton">Apply</button></form></div>
                 <% } %>
               <% } %>
         

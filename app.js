@@ -4,7 +4,7 @@ const ejs=require("ejs")
 const mongoose=require("mongoose")
 const bodyParser=require("body-parser")
 const bcrypt = require("bcrypt");
-const { response } = require("express")
+const { response, application } = require("express")
 const path=require('path')
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -55,6 +55,7 @@ Companiesfollowers:[String],
 following:[String],
 Posts:[{description:String,createdAt:String,likes:[String]}],
 Notifications:[String],
+Applied:[String],
 skills:[String]
 })
 const companySchema=new mongoose.Schema({
@@ -272,6 +273,10 @@ app.post("/dashboardcompany/:id/delete",function(req,res){
         })
     })
 })
+app.post('/dashboardcompany/:id/userlink',function(req,res){
+    console.log(Myid,req.body.userlink)
+    res.redirect('/dashboardcompany/'+Myid+'/'+req.body.userlink)
+})
 app.get('/dashboardcompany/:id/post',function(req,res){
     Myid=req.params.id
 })
@@ -314,7 +319,8 @@ app.post('/dashboardcompany/:companyid/:userId/follow',function(req,res){
         docs.updateOne({$push:{Usersfollowing:idofFriend1}},function(err,docs1){           
         if(docs1){             
         Detail.findOne({id:idofFriend1},function(err,docs2){            
-        docs2.updateOne({$push:{Companiesfollowers:idofMe1}},function(err,docs3){           
+        docs2.updateOne({$push:{Companiesfollowers:idofMe1}},function(err,docs3){   
+                      
         if(docs3){
             console.log("followed!!")
         res.redirect('/dashboardcompany/'+idofMe1+'/'+idofFriend1)
@@ -346,7 +352,42 @@ app.get('/dashboard/:id/:companyId',function(req,res){
         })
         }})
 app.post('/dashboard/:id/:companyId/apply',function(req,res){
-    
+    console.log(idofFriend2)
+    var name=''
+    var jugaad=''
+    Detail.findOne({id:idofMe2},function(err,docs){
+        console.log(idofMe2)
+        name=docs.name
+    })
+    CompanyDetail.findOne({id:idofFriend2},function(err,docs){
+        docs.applications.forEach(function(application){
+            console.log(req.body.applybutton)
+            console.log(application.job)
+            if(application.job==req.body.applybutton){
+                console.log(idofFriend2)
+                jugaad=name+"+"+idofMe2
+                jugaad1=docs.name+'+'+application.job
+                console.log(jugaad1)
+                if(!application.applicants.includes(jugaad)){
+                application.applicants.push(jugaad)
+                Detail.findOne({id:idofMe2},function(err,docs1){
+                    docs1.Applied.push(jugaad1)
+                    docs1.save()
+                })
+                }else{
+                    application.applicants.remove(jugaad)
+                    Detail.findOne({id:idofMe2},function(err,docs1){
+                        docs1.Applied.pull(jugaad1)
+                        docs1.save()
+                    })}
+                docs.save(function(err,docs1){
+                    if(docs1){
+                        res.redirect('/dashboard/'+idofMe2+'/'+idofFriend2)
+                    }
+                })
+            }
+        })
+    })
 })
 app.post('/dashboard/:id/:companyId/follow',function(req,res){
         console.log(idofMe2)
@@ -355,7 +396,8 @@ app.post('/dashboard/:id/:companyId/follow',function(req,res){
         docs.updateOne({$push:{Companiesfollowing:idofFriend2}},function(err,docs1){           
         if(docs1){             
         CompanyDetail.findOne({id:idofFriend2},function(err,docs2){            
-        docs2.updateOne({$push:{Usersfollowers:idofMe2}},function(err,docs3){           
+        docs2.updateOne({$push:{Usersfollowers:idofMe2}},function(err,docs3){      
+                   
         if(docs3){
             console.log("followed!!")
         res.redirect('/dashboard/'+idofMe2+'/'+idofFriend2)
@@ -391,7 +433,9 @@ app.post('/dashboardcompany/:companyid/company/:companyId/follow',function(req,r
         docs.updateOne({$push:{followers:idofFriend3}},function(err,docs1){           
         if(docs1){             
         CompanyDetail.findOne({id:idofFriend3},function(err,docs2){            
-        docs2.updateOne({$push:{following:idofMe3}},function(err,docs3){           
+        docs2.updateOne({$push:{following:idofMe3}},function(err,docs3){    
+            docs3.Notifications.push(docs.name+' started following you!!')
+            docs3.save()       
         if(docs3){
             console.log("followed!!")
         res.redirect('/dashboardcompany/'+idofMe3+'/'+idofFriend3)
@@ -491,6 +535,7 @@ app.post('/dashboard/:id/post',function(req,res){
 app.post('/dashboard/:id/skills',function(req,res){
     res.redirect('/skill/'+Myid)
 })
+//code for liking posts
 app.post('/dashboard/:id/liked',function(req,res){
     var arr=req.body.likebutton.split(',')
     Detail.findOne({id:arr[1]},function(err,docs){
@@ -499,6 +544,7 @@ app.post('/dashboard/:id/liked',function(req,res){
             if(post._id==arr[0]){
                 if(!post.likes.includes(Myid)){
                 post.likes.push(Myid)
+                docs3.Notifications.push('someone liked your post!!')    
                 docs.save((err,docs)=>{
                     if(docs){
                         res.redirect('/dashboard/'+Myid)
@@ -534,7 +580,8 @@ app.post('/dashboard/:id/user/:userId/follow',function(req,res){
         docs.updateOne({$push:{following:idofFriend}},function(err,docs1){           
         if(docs1){             
         Detail.findOne({id:idofFriend},function(err,docs2){            
-        docs2.updateOne({$push:{followers:idofMe}},function(err,docs3){           
+        docs2.updateOne({$push:{followers:idofMe}},function(err,docs3){     
+              
         if(docs3){
             console.log("followed!!")
         res.redirect('/dashboard/'+idofMe+'/'+idofFriend)
@@ -606,14 +653,22 @@ app.post('/vacancies/:id',function(req,res){
         res.redirect('/vacancies/'+Myid3)
     }else{
     docs.requirements.push(req.body.skill[0])
+    docs.applications.push({job:req.body.skill[0],applicants:[]})
     docs.save((err,docs)=>{
         res.redirect('/vacancies/'+Myid3)
-    })}
+    })
+    docs.Usersfollowing.forEach(function(user){
+        Detail.findOne({id:user},function(err,docs1){
+            docs1.Notifications.push(docs.name+'has released new vacancies!!')
+        })
+    })
+}
 })
 })
 app.post('/vacancies/:id/delete',function(req,res){
     CompanyDetail.findOne({id:Myid3},function(err,docs){
         docs.requirements.remove(req.body.checkbox)
+        // docs.applications.remove({job:req.body.skills[0],applicants:[]})
         docs.save((err,docs)=>{
             if(docs){
                 res.redirect('/vacancies/'+Myid3)
