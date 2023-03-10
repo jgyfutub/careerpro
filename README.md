@@ -1,4 +1,4 @@
-# careerpro
+# careerpro(I haven't made three.js file,I have copied the file from three js documentation for 3d effects)
 i am making a linkedin clone with project name career pro.It has the following features:
 
 1.Users can create their account and can login also
