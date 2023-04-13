@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const { response, application } = require("express")
 const path=require('path')
 const jsdom = require("jsdom");
+const { deepStrictEqual } = require("assert")
 const { JSDOM } = jsdom;
 // const multer=require('multer')
 // const storage=multer.diskStorage({
@@ -90,24 +91,30 @@ const User=new mongoose.model('users',userSchema)
 const Detail=new mongoose.model('details',detailSchema)
 const Company=new mongoose.model('companies',companySchema)
 const CompanyDetail=new mongoose.model('companydetail',companydetailSchema)
+//sending the mainpage of project
 app.get("/",function(req,res){
     res.sendFile(__dirname +'/three.html')
 })
 var error_register=""
+//sending the register page with errors (if any)
 app.get("/register",function(req,res){
     res.render("register",{error_register:error_register})
 })
 app.post("/register",function(req,res){
+    //taking the email and password
     const username=req.body.email
     const password=req.body.password
+    //hashing the password
     const salt=bcrypt.genSaltSync(16)
     const hashedPassword=bcrypt.hashSync(password,salt)
+    //if a detail not filled send the error
     if(username==""||hashedPassword==""||username=="" && hashedPassword==""){
-        error_register="bsdk pura to bhar"
+        error_register="plz fill all details"
         res.redirect('/register')
     }else{
     User.findOne({email:username},function(err,foundUser){
         if(!foundUser){
+            //add email and password to the database
             const newuser=new User({
                 email:username,
                 password:hashedPassword
@@ -115,6 +122,7 @@ app.post("/register",function(req,res){
             newuser.save(function(err,docs){
                 if(!err){console.log("saved!!")
                 console.log(newuser._id)
+                //send user to the detail page
                 var url="/details/"+newuser._id
                 res.redirect(url)}
                 else{
@@ -122,6 +130,7 @@ app.post("/register",function(req,res){
                 console.log(err)
                 error_register="error occured :("}})
         }else {
+            //if user with same email already in database
             if(foundUser){
             error_register="the email already exists!!!"
             res.redirect('/register')
@@ -238,20 +247,40 @@ app.post('/detailscompany/:id',function(req,res){
             res.redirect('/dashboardcompany/'+idofCompany)}})
 })
 app.get("/dashboardcompany/:id",function(req,res){
+    var searchcompany=[]
+    var searchuser=[]
+    CompanyDetail.find({},function(err,docs){
+        if(docs){
+            console.log(docs)
+            for(i=0;i<docs.length;i++){
+                console.log(docs[i]._doc.id)
+                searchcompany.push(docs[i]._doc)
+            }
+        }
+    })
+    Detail.find({},function(err,docs){
+        if(docs){
+            console.log(docs)
+            for(i=0;i<docs.length;i++){
+                searchuser.push(docs[i]._doc)
+            }
+        }
+    })
             Myid=req.params.id
             CompanyDetail.findOne({id:req.params.id},function(err,docs){
                 if(docs){
                     var othersPosts=[]
                     if(docs.following.length==0){
-                        res.render('dashboardcompany',{UserDetails:docs,OtherDetails:[]})
+                        console.log(searchcompany,searchuser)
+                        res.render('dashboardcompany',{UserDetails:docs,OtherDetails:[],searchuser:searchuser,searchcompany:searchcompany})
                     }
                     docs.following.forEach(function(id){
                         CompanyDetail.findOne({id:id},function(err,docs1){
                             if(docs1){
                             othersPosts.push([docs1.Posts,docs1.name,docs1.id])
-                            res.render('dashboardcompany',{UserDetails:docs,OtherDetails:othersPosts})}
+                            res.render('dashboardcompany',{UserDetails:docs,OtherDetails:othersPosts,searchuser:searchuser,searchcompany:searchcompany})}
                             else if(!docs1){
-                                res.render('dashboardcompany',{UserDetails:docs,OtherDetails:[]})
+                                res.render('dashboardcompany',{UserDetails:docs,OtherDetails:[],searchuser:searchuser,searchcompany:searchcompany})
                             }
                         })
                     })
@@ -393,7 +422,9 @@ app.post('/dashboard/:id/:companyId/follow',function(req,res){
         console.log(idofMe2)
         Detail.findOne({id:idofMe2},function(err,docs){       
         if(!docs.Companiesfollowing.includes(idofFriend2)){                 
-        docs.updateOne({$push:{Companiesfollowing:idofFriend2}},function(err,docs1){           
+        docs.updateOne({$push:{Companiesfollowing:idofFriend2}},function(err,docs1){       
+            docs.Notifications.push('hello')    
+            docs.save()
         if(docs1){             
         CompanyDetail.findOne({id:idofFriend2},function(err,docs2){            
         docs2.updateOne({$push:{Usersfollowers:idofMe2}},function(err,docs3){      
@@ -434,8 +465,8 @@ app.post('/dashboardcompany/:companyid/company/:companyId/follow',function(req,r
         if(docs1){             
         CompanyDetail.findOne({id:idofFriend3},function(err,docs2){            
         docs2.updateOne({$push:{following:idofMe3}},function(err,docs3){    
-            docs3.Notifications.push(docs.name+' started following you!!')
-            docs3.save()       
+            docs2.Notifications.push(docs.name+' started following you!!')
+            docs2.save()       
         if(docs3){
             console.log("followed!!")
         res.redirect('/dashboardcompany/'+idofMe3+'/'+idofFriend3)
@@ -451,6 +482,25 @@ app.post('/dashboardcompany/:companyid/company/:companyId/follow',function(req,r
             }})})}})}})})
 var Myid=''
 app.get("/dashboard/:id",function(req,res){
+    var searchcompany=[]
+    var searchuser=[]
+    CompanyDetail.find({},function(err,docs){
+        if(docs){
+            console.log(docs)
+            for(i=0;i<docs.length;i++){
+                console.log(docs[i]._doc.id)
+                searchcompany.push(docs[i]._doc)
+            }
+        }
+    })
+    Detail.find({},function(err,docs){
+        if(docs){
+            console.log(docs)
+            for(i=0;i<docs.length;i++){
+                searchuser.push(docs[i]._doc)
+            }
+        }
+    })
     Myid=req.params.id
     var othersPosts=[]
     Detail.findOne({id:req.params.id},function(err,docs){
@@ -647,7 +697,7 @@ app.post('/vacancies/:id',function(req,res){
     console.log(req.body.skill[0]);
     console.log(Myid3)
     CompanyDetail.findOne({id:Myid3},function(err,docs){
-        console.log(docs.name)
+        // console.log(docs.name)
     if(docs.requirements.includes(req.body.skill[0])){
         error_skill="this skill is already included"
         res.redirect('/vacancies/'+Myid3)
@@ -659,7 +709,7 @@ app.post('/vacancies/:id',function(req,res){
     })
     docs.Usersfollowing.forEach(function(user){
         Detail.findOne({id:user},function(err,docs1){
-            docs1.Notifications.push(docs.name+'has released new vacancies!!')
+            // docs1.Notifications.push(docs.name+'has released new vacancies!!')
         })
     })
 }
@@ -679,7 +729,6 @@ app.post('/vacancies/:id/delete',function(req,res){
 app.post('/vacancies/:id/dashboardcompany',function(req,res){   
     res.redirect('/dashboardcompany/'+Myid3)
 })
-
 app.listen(3000,()=>{
     console.log("Server running on port 3000")
 })

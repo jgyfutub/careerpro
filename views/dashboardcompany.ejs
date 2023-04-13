@@ -36,9 +36,15 @@
                 <div id="root"></div>
                 <div style="width:calc(100%/1.5);">
                 <input id="searchbar" type="text"
-            name="search" placeholder="Search.." style="width:100%;border-radius: 20px;padding-inline: 20px;margin-block: 5px;padding-block: 7px;" />
-            <div style="display:grid;justify-content: start;z-index: 1;" class="bg-white border-2 border-black ">
-                <button >Add users here</button>
+            name="search" placeholder="Search.." style="width:100%;border-radius: 20px;padding-inline: 20px;margin-block: 5px;padding-block: 7px;" onkeyup="searchfunction()"  />
+            <div style="display:grid;justify-content: start;z-index: 1;" class="bg-white border-2 border-black " id="names">
+                <% searchcompany.forEach(function(company){ %>
+                    <form action="/dashboardcompany/<%=UserDetails.id%>/company/<%=company.id%>" method="get" style="display:none">
+                <button type="submit"><%= company.name %></button></form>
+                <% }) %>
+                <% searchuser.forEach(function(user){ %>
+                    <button ><%= user.name %></button>
+                    <% }) %>
             </div></div> 
             <button type="submit" class="text-zinc-50 hover:text-zinc-300 active:text-zinc-600" ><i class="fa fa-search"></i></button>
             <!--elements to be shown in mobile view-->
@@ -52,6 +58,28 @@
             
     </nav>
      <script>
+        const searchfunction=()=>{
+            let filter=document.getElementById('searchbar').value.toUpperCase()
+            let searches=document.getElementById('names')
+            let buttons=searches.getElementsByTagName('form')
+            for(var i=0;i<buttons.length;i++){
+                let button=buttons[i].getElementsByTagName('button')[0]
+                if(button){
+                    let textvalue=button.textContent||button.innerHTML
+                    if(textvalue.toUpperCase().indexOf(filter)>=0){
+                        console.log(textvalue,textvalue.toUpperCase().indexOf(filter))
+                        buttons[i].style.display="block"
+                    }else if( textvalue.toUpperCase().indexOf(filter)<0){
+                        buttons[i].style.display='none'
+                    }
+                }
+            }
+            if(filter==''){
+                for(var i=0;i<buttons.length;i++){
+                    buttons[i].style.display="none"
+                }
+            }
+        }
         let nav =document.getElementById('nav')
         //let nav_lap=document.getElementById("lap_nav");
         let nav_phone=document.getElementById("phone_nav")
@@ -263,7 +291,7 @@
     <div style="display:flex;flex-direction:row;">
      <button style="padding: 13px;font-size: medium;background-color: #f2f2f2;border-width: 0px;"id='rec'>Vacancies</button>
      </div>
-     <form action="/dashboardcompany/vacancies/:id" method="post">
+     <form action="/dashboardcompany/:id/vacancies" method="post">
      <button style="padding: 13px;font-size: medium;border-width: 0px;display: block;" class="bg-slate-200 text-black hover:text-white rounded-lg hover:bg-slate-600 active:bg-slate-900" id="hide">Update Vacancies</button></form>
      <button class="bg-red-500 hover:bg-red-900 mt-2 ml-2 px-1 " style="height:20px" id="cross3">X</button>
     </div>
