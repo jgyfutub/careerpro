@@ -15,4 +15,6 @@ i am making a linkedin clone with project name career pro.It has the following f
 
 7.Users can see on their dashboard which vacancies had they applied for
 
+8.can search users and companies
+
 More interesting features on the way......
