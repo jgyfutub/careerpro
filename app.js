@@ -180,7 +180,7 @@ app.post("/login",function(req,res){
 const username=req.body.email
     const password=req.body.password
     if(username==""||password==""||username=="" && password==""){
-        error="bsdk pura to bhar"
+        error="plz fill all details"
         res.redirect('/login')
     }else{
     User.findOne({email:username},function(err,foundUser){
